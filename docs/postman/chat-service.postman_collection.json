@@ -1,0 +1,168 @@
+{
+  "info": {
+    "name": "Chat Service API",
+    "_postman_id": "d2a8f6c8-0000-4e5b-9a2b-1234567890ab",
+    "description": "Postman collection for chat-service (session & message flows). Use the included environment to set `baseUrl` and `apiKey`.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Session",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+              "var json = pm.response.json();",
+              "if (json && json.id) { pm.environment.set('sessionId', json.id); pm.test('saved sessionId', function(){pm.expect(json.id).to.be.a('string')}); }"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "X-API-KEY", "value": "{{apiKey}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"test-user\",\n  \"title\": \"My test session\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": { "raw": "{{baseUrl}}/api/v1/sessions", "host": ["{{baseUrl}}"], "path": ["api","v1","sessions"] }
+      },
+      "response": []
+    },
+    {
+      "name": "List Sessions",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function(){ pm.response.to.have.status(200); });",
+              "var json = pm.response.json(); pm.test('items array present', function(){ pm.expect(json.items).to.be.an('array'); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "X-API-KEY", "value": "{{apiKey}}" } ],
+        "url": { "raw": "{{baseUrl}}/api/v1/sessions?userId=test-user", "host": ["{{baseUrl}}"], "path": ["api","v1","sessions"], "query": [ { "key": "userId", "value": "test-user" } ] }
+      },
+      "response": []
+    },
+    {
+      "name": "Rename Session",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', function(){ pm.response.to.have.status(200); });",
+              "var json = pm.response.json(); pm.test('title updated', function(){ pm.expect(json.title).to.eql('Renamed from Postman'); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "X-API-KEY", "value": "{{apiKey}}" } ],
+        "body": { "mode": "raw", "raw": "{ \"title\": \"Renamed from Postman\" }", "options": { "raw": { "language": "json" } } },
+        "url": { "raw": "{{baseUrl}}/api/v1/sessions/{{sessionId}}/rename", "host": ["{{baseUrl}}"], "path": ["api","v1","sessions","{{sessionId}}","rename"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Toggle Favorite",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', function(){ pm.response.to.have.status(200); });",
+              "var json = pm.response.json(); pm.test('favorite is true', function(){ pm.expect(json.favorite).to.be.true; });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "X-API-KEY", "value": "{{apiKey}}" } ],
+        "body": { "mode": "raw", "raw": "{ \"favorite\": true }", "options": { "raw": { "language": "json" } } },
+        "url": { "raw": "{{baseUrl}}/api/v1/sessions/{{sessionId}}/favorite", "host": ["{{baseUrl}}"], "path": ["api","v1","sessions","{{sessionId}}","favorite"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Append Message",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 201', function(){ pm.response.to.have.status(201); });",
+              "var json = pm.response.json(); pm.test('sender is USER', function(){ pm.expect(json.sender).to.eql('USER'); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "X-API-KEY", "value": "{{apiKey}}" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"sender\": \"USER\",\n  \"content\": \"Hello from Postman\",\n  \"contextJson\": null\n}", "options": { "raw": { "language": "json" } } },
+        "url": { "raw": "{{baseUrl}}/api/v1/sessions/{{sessionId}}/messages", "host": ["{{baseUrl}}"], "path": ["api","v1","sessions","{{sessionId}}","messages"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Message History",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', function(){ pm.response.to.have.status(200); });",
+              "var json = pm.response.json(); pm.test('items is array', function(){ pm.expect(json.items).to.be.an('array'); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "X-API-KEY", "value": "{{apiKey}}" } ],
+        "url": { "raw": "{{baseUrl}}/api/v1/sessions/{{sessionId}}/messages?page=0&size=50", "host": ["{{baseUrl}}"], "path": ["api","v1","sessions","{{sessionId}}","messages"], "query": [ { "key": "page", "value": "0" }, { "key": "size", "value": "50" } ] }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Session",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 204', function(){ pm.response.to.have.status(204); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [ { "key": "X-API-KEY", "value": "{{apiKey}}" } ],
+        "url": { "raw": "{{baseUrl}}/api/v1/sessions/{{sessionId}}", "host": ["{{baseUrl}}"], "path": ["api","v1","sessions","{{sessionId}}"] }
+      },
+      "response": []
+    }
+  ]
+}

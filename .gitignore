@@ -1,0 +1,9 @@
+/target/
+/logs/
+*.log
+/.env
+/.idea/
+/data/
+/out/
+.DS_Store
+/.vscode

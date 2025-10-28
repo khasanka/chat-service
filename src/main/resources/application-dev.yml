@@ -1,0 +1,39 @@
+spring:
+  datasource:
+    # Use a file-backed H2 DB for local development. Path is relative to the project root.
+    url: "jdbc:h2:file:./data/chatdb;MODE=PostgreSQL;AUTO_SERVER=TRUE"
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+
+server:
+  port: ${SERVER_PORT:8080}
+  error:
+    include-exception: true
+    include-stacktrace: ALWAYS
+
+logging:
+  level:
+    root: INFO
+    com.example.chatservice: INFO
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
