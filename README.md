@@ -26,7 +26,7 @@ Prerequisites
 Open PowerShell in the repo root and build the artifact (skip tests if you want):
 
 ```powershell
-cd "D:\java projects\chat-service"
+cd "<your_folder_location>\chat-service"
 .\mvnw -DskipTests package
 ```
 
